@@ -1,4 +1,4 @@
-const fixerUri = 'https://saschapopp.github.io/fx-calculator/rates.json'
+const fixerUri = 'rates.json'
 
 document.querySelectorAll('select').forEach(element => {
     element.innerHTML =`
@@ -9,12 +9,33 @@ document.querySelectorAll('select').forEach(element => {
     `;
 });
 
+document.querySelector('button').addEventListener('click', () => {
+    const inputValue = document.querySelector('[name="input-value"]').value
+    const inputCurrency = document.querySelector('[name="input-curreny"]').value
+    const outputCurrency = document.querySelector('[name="output-currency"]').value
+
+    convert(inputValue, inputCurrency, outputCurrency)
+    .then((outputValue) => {
+        document.querySelector('[name="output-value"]').value = outputValue;
+    })
+});
+
 function convert(inputValue, inputCurrency, outputCurrency) {
-    fetch(fixerUri)
-    .then(response => {
-        if (response.status == 200) {return response.json();
+
+    return new Promise((resolve, reject) => {
+    fetch(fixerUri).then(response => {
+        if (response.status == 200) {
+            return response.json().rates;
         } else {
             return Promise.reject('failed to download rates');
         }
-    }).then((rates) => {})
+    }).then((rates) => {
+
+        rates ["EUR"] = 1;
+        if (inputCurrency != "EUR") {
+            inputValue = inputValue / rates[inputCurrency];
+        }
+        resolve(inputValue *rates[outputCurrency]);
+    });
+});
 }
