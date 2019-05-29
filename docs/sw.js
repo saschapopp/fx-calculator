@@ -1,5 +1,4 @@
-self.addEventListener('install', (event) => 
-{
+self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open('fxcalc-v1')
         .then(cache => cache.addAll
@@ -17,8 +16,7 @@ self.addEventListener('install', (event) =>
 
 });
 
-self.addEventListener('fetch', (event) => 
-{
+self.addEventListener('fetch', (event) => {
         event.respondWith(
             caches.open('fxcalc-v1')
             .then(cache => cache.match(event.request))
